@@ -8,3 +8,4 @@ new_day:
 	@cp tests/Day01Tests.cs tests/Day$(DAY)Tests.cs
 	@sed -i 's/Day01/Day$(DAY)/g' Day$(DAY).cs
 	@sed -i 's/Day01/Day$(DAY)/g' tests/Day$(DAY)Tests.cs
+	@sed -i 's/DAY01/DAY$(DAY)/g' tests/Day$(DAY)Tests.cs

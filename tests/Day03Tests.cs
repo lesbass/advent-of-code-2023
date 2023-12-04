@@ -1,3 +1,4 @@
+using dotenv.net;
 using Xunit;
 using static advent_of_code_2022.Day03;
 
@@ -5,6 +6,12 @@ namespace advent_of_code_2022.tests;
 
 public class Day03Tests
 {
+    public Day03Tests()
+    {
+        DotEnv.Load();
+    }
+
+
     [Fact]
     public void Part1_Test()
     {

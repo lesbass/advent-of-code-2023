@@ -23,13 +23,11 @@ public static class Day07
     {
         public Hand(string raw, bool useJoker = false)
         {
-            UseJoker = useJoker;
             var rawSplit = raw.Split(' ');
             Bet = int.Parse(rawSplit[1]);
-            Cards = rawSplit[0].Select(it => new Card(it, UseJoker && it == 'J')).ToList();
+            Cards = rawSplit[0].Select(it => new Card(it, useJoker && it == 'J')).ToList();
         }
 
-        private bool UseJoker { get; }
 
         public int Bet { get; }
         private List<Card> Cards { get; }
@@ -45,9 +43,9 @@ public static class Day07
         private bool TwoPairs => GroupedCard.Count(it => !it.Key.IsJoker && it.Value == 2) == 2;
 
         private bool OnePair => GroupedCard.Count(it => !it.Key.IsJoker && it.Value == 2) == 1 || CountJokers == 1;
-        private int CountJokers => UseJoker ? Cards.Count(it => it.IsJoker) : 0;
+        private int CountJokers => Cards.Count(it => it.IsJoker);
 
-        public int HandValue
+        private int HandValue
         {
             get
             {
@@ -74,7 +72,7 @@ public static class Day07
                     var card = Cards[i];
                     var otherCard = other.Cards[i];
                     if (card.Value != otherCard.Value)
-                        return card.GetSortValue(UseJoker) > otherCard.GetSortValue(UseJoker) ? 1 : -1;
+                        return card.SortValue > otherCard.SortValue ? 1 : -1;
                 }
 
             return HandValue > other.HandValue ? 1 : -1;
@@ -86,7 +84,6 @@ public static class Day07
                 ? GroupedCard.First().Value
                 : GroupedCard.Where(it => !it.Key.IsJoker).ToList().Max(it => it.Value);
 
-            if (!UseJoker) return start == match;
             for (var i = start; i <= start + CountJokers; i++)
                 if (i == match)
                     return true;
@@ -96,18 +93,21 @@ public static class Day07
 
         private record Card(char Value, bool IsJoker)
         {
-            public int GetSortValue(bool useJoker)
+            public int SortValue
             {
-                if (char.IsNumber(Value)) return int.Parse(Value.ToString());
-                var values = new Dictionary<char, int>
+                get
                 {
-                    { 'T', 10 },
-                    { 'J', useJoker ? 0 : 11 },
-                    { 'Q', 12 },
-                    { 'K', 13 },
-                    { 'A', 14 }
-                };
-                return values[Value];
+                    if (char.IsNumber(Value)) return int.Parse(Value.ToString());
+                    var values = new Dictionary<char, int>
+                    {
+                        { 'T', 10 },
+                        { 'J', IsJoker ? 0 : 11 },
+                        { 'Q', 12 },
+                        { 'K', 13 },
+                        { 'A', 14 }
+                    };
+                    return values[Value];
+                }
             }
         }
     }
